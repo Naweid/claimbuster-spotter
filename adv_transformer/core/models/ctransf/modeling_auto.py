@@ -31,7 +31,6 @@ from transformers import (AlbertConfig,
                           OpenAIGPTConfig,
                           RobertaConfig,
                           T5Config,
-                          TransfoXLConfig,
                           XLMConfig,
                           XLMRobertaConfig,
                           XLNetConfig, TFCamembertForMaskedLM, TFCamembertForMultipleChoice,
@@ -55,7 +54,7 @@ from transformers import (AlbertConfig,
                           TFMobileBertForTokenClassification,
                           TFMobileBertModel, TFOpenAIGPTLMHeadModel, TFOpenAIGPTModel, TFT5ForConditionalGeneration,
                           TFT5Model,
-                          TFTransfoXLLMHeadModel, TFTransfoXLModel, TFXLMForMultipleChoice,
+                          TFXLMForMultipleChoice,
                           TFXLMForQuestionAnsweringSimple,
                           TFXLMForSequenceClassification,
                           TFXLMForTokenClassification,
@@ -124,7 +123,6 @@ TF_MODEL_MAPPING = OrderedDict(
         (RobertaConfig, TFRobertaModel),
         (BertConfig, TFBertModel),
         (T5Config, TFT5Model),
-        (TransfoXLConfig, TFTransfoXLModel),
         (XLMConfig, TFXLMModel),
         (XLMRobertaConfig, TFXLMRobertaModel),
         (XLNetConfig, TFXLNetModel),
@@ -145,7 +143,6 @@ TF_MODEL_FOR_PRETRAINING_MAPPING = OrderedDict(
         (RobertaConfig, TFRobertaForMaskedLM),
         (BertConfig, TFBertForPreTraining),
         (T5Config, TFT5ForConditionalGeneration),
-        (TransfoXLConfig, TFTransfoXLLMHeadModel),
         (XLMConfig, TFXLMWithLMHeadModel),
         (XLMRobertaConfig, TFXLMRobertaForMaskedLM),
         (XLNetConfig, TFXLNetLMHeadModel),
@@ -166,7 +163,6 @@ TF_MODEL_WITH_LM_HEAD_MAPPING = OrderedDict(
         (RobertaConfig, TFRobertaForMaskedLM),
         (BertConfig, TFBertForMaskedLM),
         (T5Config, TFT5ForConditionalGeneration),
-        (TransfoXLConfig, TFTransfoXLLMHeadModel),
         (XLMConfig, TFXLMWithLMHeadModel),
         (XLMRobertaConfig, TFXLMRobertaForMaskedLM),
         (XLNetConfig, TFXLNetLMHeadModel),
@@ -254,7 +250,6 @@ class TFAutoModel(object):
             - `bert`: TFBertModel (Bert model)
             - `openai-gpt`: TFOpenAIGPTModel (OpenAI GPT model)
             - `gpt2`: TFGPT2Model (OpenAI GPT-2 model)
-            - `transfo-xl`: TFTransfoXLModel (Transformer-XL model)
             - `xlnet`: TFXLNetModel (XLNet model)
             - `xlm`: TFXLMModel (XLM model)
             - `ctrl`: TFCTRLModel (CTRL model)
@@ -290,7 +285,6 @@ class TFAutoModel(object):
                     - isInstance of `openai-gpt` configuration class: TFOpenAIGPTModel (OpenAI GPT model)
                     - isInstance of `gpt2` configuration class: TFGPT2Model (OpenAI GPT-2 model)
                     - isInstance of `ctrl` configuration class: TFCTRLModel (Salesforce CTRL  model)
-                    - isInstance of `transfo-xl` configuration class: TFTransfoXLModel (Transformer-XL model)
                     - isInstance of `xlnet` configuration class: TFXLNetModel (XLNet model)
                     - isInstance of `xlm` configuration class: TFXLMModel (XLM model)
 
@@ -326,7 +320,6 @@ class TFAutoModel(object):
             - `bert`: TFTFBertModel (Bert model)
             - `openai-gpt`: TFOpenAIGPTModel (OpenAI GPT model)
             - `gpt2`: TFGPT2Model (OpenAI GPT-2 model)
-            - `transfo-xl`: TFTransfoXLModel (Transformer-XL model)
             - `xlnet`: TFXLNetModel (XLNet model)
             - `ctrl`: TFCTRLModel (CTRL model)
 
@@ -444,7 +437,6 @@ class TFAutoModelForPreTraining(object):
                 - isInstance of `openai-gpt` configuration class: :class:`~transformers.TFOpenAIGPTLMHeadModel` (OpenAI GPT model)
                 - isInstance of `gpt2` configuration class: :class:`~transformers.TFGPT2ModelLMHeadModel` (OpenAI GPT-2 model)
                 - isInstance of `ctrl` configuration class: :class:`~transformers.TFCTRLModelLMHeadModel` (Salesforce CTRL  model)
-                - isInstance of `transfo-xl` configuration class: :class:`~transformers.TFTransfoXLLMHeadModel` (Transformer-XL model)
                 - isInstance of `xlnet` configuration class: :class:`~transformers.TFXLNetLMHeadModel` (XLNet model)
                 - isInstance of `xlm` configuration class: :class:`~transformers.TFXLMWithLMHeadModel` (XLM model)
 
@@ -480,7 +472,6 @@ class TFAutoModelForPreTraining(object):
             - `bert`: :class:`~transformers.TFBertForPreTraining` (Bert model)
             - `openai-gpt`: :class:`~transformers.TFOpenAIGPTLMHeadModel` (OpenAI GPT model)
             - `gpt2`: :class:`~transformers.TFGPT2LMHeadModel` (OpenAI GPT-2 model)
-            - `transfo-xl`: :class:`~transformers.TFTransfoXLLMHeadModel` (Transformer-XL model)
             - `xlnet`: :class:`~transformers.TFXLNetLMHeadModel` (XLNet model)
             - `xlm`: :class:`~transformers.TFXLMWithLMHeadModel` (XLM model)
             - `ctrl`: :class:`~transformers.TFCTRLLMHeadModel` (Salesforce CTRL model)
@@ -580,7 +571,6 @@ class TFAutoModelWithLMHead(object):
             - `bert`: TFBertForMaskedLM (Bert model)
             - `openai-gpt`: TFOpenAIGPTLMHeadModel (OpenAI GPT model)
             - `gpt2`: TFGPT2LMHeadModel (OpenAI GPT-2 model)
-            - `transfo-xl`: TFTransfoXLLMHeadModel (Transformer-XL model)
             - `xlnet`: TFXLNetLMHeadModel (XLNet model)
             - `xlm`: TFXLMWithLMHeadModel (XLM model)
             - `ctrl`: TFCTRLLMHeadModel (CTRL model)
@@ -616,7 +606,6 @@ class TFAutoModelWithLMHead(object):
                     - isInstance of `openai-gpt` configuration class: OpenAIGPTModel (OpenAI GPT model)
                     - isInstance of `gpt2` configuration class: GPT2Model (OpenAI GPT-2 model)
                     - isInstance of `ctrl` configuration class: CTRLModel (Salesforce CTRL  model)
-                    - isInstance of `transfo-xl` configuration class: TransfoXLModel (Transformer-XL model)
                     - isInstance of `xlnet` configuration class: XLNetModel (XLNet model)
                     - isInstance of `xlm` configuration class: XLMModel (XLM model)
 
@@ -652,7 +641,6 @@ class TFAutoModelWithLMHead(object):
             - `bert`: TFBertForMaskedLM (Bert model)
             - `openai-gpt`: TFOpenAIGPTLMHeadModel (OpenAI GPT model)
             - `gpt2`: TFGPT2LMHeadModel (OpenAI GPT-2 model)
-            - `transfo-xl`: TFTransfoXLLMHeadModel (Transformer-XL model)
             - `xlnet`: TFXLNetLMHeadModel (XLNet model)
             - `xlm`: TFXLMWithLMHeadModel (XLM model)
             - `ctrl`: TFCTRLLMHeadModel (CTRL model)

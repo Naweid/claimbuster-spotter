@@ -45,7 +45,7 @@ def get_user_input(r, input_text, k="input_text"):
     return ""
 
 
-@app.route("/score/text/<input_text:.*>", methods=["POST"])
+@app.route("/score/text/<input_text:.*>", methods=["POST"], name="score_text_single")
 async def score_text(request, input_text):
     """
     Returns the scores of the text provided.
@@ -70,8 +70,8 @@ async def score_text(request, input_text):
     return json([{'claim': input_text, 'score': scores[1]}])
 
 
-@app.route("/score/text/sentences/<input_text:.*>", methods=["POST"])
-async def score_text(request, input_text):
+@app.route("/score/text/sentences/<input_text:.*>", methods=["POST"], name="score_text_sentences")
+async def score_text_sentences(request, input_text):
     """
     Returns the scores of the text provided.
 

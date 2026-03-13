@@ -1539,7 +1539,7 @@ class TFBertForQuestionAnswering(TFBertPreTrainedModel, TFQuestionAnsweringLoss)
                 inputs = inputs[:9]
         elif isinstance(inputs, (dict, BatchEncoding)):
             start_positions = inputs.pop("start_positions", start_positions)
-            end_positions = inputs.pop("end_positions", start_positions)
+            end_positions = inputs.pop("end_positions", end_positions)
 
         outputs = self.bert(
             inputs,

@@ -113,6 +113,13 @@ from transformers.utils import logging
 from adv_transformer.core.utils.flags import FLAGS
 
 
+def _add_code_sample_docstrings(*args, **kwargs):
+    # Drop kwargs that newer transformers no longer accept
+    kwargs.pop("tokenizer_class", None)
+    kwargs.pop("config_class", None)
+    return add_code_sample_docstrings(*args, **kwargs)
+
+
 # Compatibility: transformers.activations_tf was removed in newer versions
 def get_tf_activation(activation_string):
     act = {
@@ -892,7 +899,7 @@ class TFBertModel(TFBertPreTrainedModel):
         self.bert = TFBertMainAdvLayer(config, name="bert")
 
     @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
-    @add_code_sample_docstrings(
+    @_add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
         checkpoint="bert-base-cased",
         output_type=TFBaseModelOutputWithPooling,
@@ -980,7 +987,7 @@ class TFBertForMaskedLM(TFBertPreTrainedModel, TFMaskedLanguageModelingLoss):
         return self.bert.embeddings
 
     @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
-    @add_code_sample_docstrings(
+    @_add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
         checkpoint="bert-base-cased",
         output_type=TFMaskedLMOutput,
@@ -1061,7 +1068,7 @@ class TFBertLMHeadModel(TFBertPreTrainedModel, TFCausalLanguageModelingLoss):
     def get_output_embeddings(self):
         return self.bert.embeddings
 
-    @add_code_sample_docstrings(
+    @_add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
         checkpoint="bert-base-cased",
         output_type=TFCausalLMOutput,
@@ -1197,7 +1204,7 @@ class TFBertForSequenceClassification(TFBertPreTrainedModel, TFSequenceClassific
         )
 
     @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
-    @add_code_sample_docstrings(
+    @_add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
         checkpoint="bert-base-cased",
         output_type=TFSequenceClassifierOutput,
@@ -1290,7 +1297,7 @@ class TFBertForMultipleChoice(TFBertPreTrainedModel, TFMultipleChoiceLoss):
         return {"input_ids": tf.constant(MULTIPLE_CHOICE_DUMMY_INPUTS)}
 
     @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, num_choices, sequence_length"))
-    @add_code_sample_docstrings(
+    @_add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
         checkpoint="bert-base-cased",
         output_type=TFMultipleChoiceModelOutput,
@@ -1414,7 +1421,7 @@ class TFBertForTokenClassification(TFBertPreTrainedModel, TFTokenClassificationL
         )
 
     @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
-    @add_code_sample_docstrings(
+    @_add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
         checkpoint="bert-base-cased",
         output_type=TFTokenClassifierOutput,
@@ -1499,7 +1506,7 @@ class TFBertForQuestionAnswering(TFBertPreTrainedModel, TFQuestionAnsweringLoss)
         )
 
     @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
-    @add_code_sample_docstrings(
+    @_add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
         checkpoint="bert-base-cased",
         output_type=TFQuestionAnsweringModelOutput,

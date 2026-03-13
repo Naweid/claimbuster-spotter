@@ -94,4 +94,4 @@ async def score_text(request, input_text):
     return json([{'claim': sentences[i], 'score': s[1]} for i, s in enumerate(scores)])
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8009)
+    app.run(host="0.0.0.0", port=8009, workers=1)

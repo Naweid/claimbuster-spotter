@@ -107,7 +107,7 @@ except ModuleNotFoundError:
                     labels["end_position"], logits[1]
                 )
             return _compute_loss(labels, logits)
-from transformers import BatchEncoding
+from transformers.tokenization_utils_base import BatchEncoding
 from transformers.utils import logging
 
 from adv_transformer.core.utils.flags import FLAGS

@@ -41,18 +41,72 @@ from adv_transformer.core.models.ctransf.modeling_tf_outputs import (
     TFSequenceClassifierOutput,
     TFTokenClassifierOutput,
 )
-from transformers.modeling_tf_utils import (
-    TFCausalLanguageModelingLoss,
-    TFMaskedLanguageModelingLoss,
-    TFMultipleChoiceLoss,
-    TFPreTrainedModel,
-    TFQuestionAnsweringLoss,
-    TFSequenceClassificationLoss,
-    TFTokenClassificationLoss,
-    get_initializer,
-    keras_serializable,
-    shape_list,
-)
+try:
+    from transformers.modeling_tf_utils import (
+        TFCausalLanguageModelingLoss,
+        TFMaskedLanguageModelingLoss,
+        TFMultipleChoiceLoss,
+        TFPreTrainedModel,
+        TFQuestionAnsweringLoss,
+        TFSequenceClassificationLoss,
+        TFTokenClassificationLoss,
+        get_initializer,
+        keras_serializable,
+        shape_list,
+    )
+except ModuleNotFoundError:
+    # Compatibility: modeling_tf_utils was removed in newer transformers
+    def shape_list(x):
+        static = x.shape.as_list()
+        dynamic = tf.shape(x)
+        return [dynamic[i] if s is None else s for i, s in enumerate(static)]
+
+    def get_initializer(initializer_range=0.02):
+        return tf.keras.initializers.TruncatedNormal(stddev=initializer_range)
+
+    def keras_serializable(cls):
+        return cls
+
+    class TFPreTrainedModel(tf.keras.Model):
+        def __init__(self, config, *inputs, **kwargs):
+            super().__init__(*inputs, **kwargs)
+            self.config = config
+
+    def _compute_loss(labels, logits, from_logits=True):
+        return tf.reduce_mean(
+            tf.keras.losses.sparse_categorical_crossentropy(
+                labels, logits, from_logits=from_logits
+            )
+        )
+
+    class TFMaskedLanguageModelingLoss:
+        def compute_loss(self, labels, logits):
+            return _compute_loss(labels, logits)
+
+    class TFCausalLanguageModelingLoss:
+        def compute_loss(self, labels, logits):
+            return _compute_loss(labels, logits)
+
+    class TFSequenceClassificationLoss:
+        def compute_loss(self, labels, logits):
+            return _compute_loss(labels, logits)
+
+    class TFMultipleChoiceLoss:
+        def compute_loss(self, labels, logits):
+            return _compute_loss(labels, logits)
+
+    class TFTokenClassificationLoss:
+        def compute_loss(self, labels, logits):
+            return _compute_loss(labels, logits)
+
+    class TFQuestionAnsweringLoss:
+        def compute_loss(self, labels, logits):
+            if isinstance(logits, (tuple, list)) and isinstance(labels, dict):
+                # QA: labels = {start_position, end_position}, logits = (start_logits, end_logits)
+                return _compute_loss(labels["start_position"], logits[0]) + _compute_loss(
+                    labels["end_position"], logits[1]
+                )
+            return _compute_loss(labels, logits)
 from transformers.tokenization_utils import BatchEncoding
 from transformers.utils import logging
 

@@ -21,7 +21,6 @@ from typing import Optional, Tuple
 
 import tensorflow as tf
 
-from transformers.activations_tf import get_tf_activation
 from transformers import BertConfig
 from transformers.file_utils import (
     MULTIPLE_CHOICE_DUMMY_INPUTS,
@@ -58,6 +57,18 @@ from transformers.tokenization_utils import BatchEncoding
 from transformers.utils import logging
 
 from adv_transformer.core.utils.flags import FLAGS
+
+
+# Compatibility: transformers.activations_tf was removed in newer versions
+def get_tf_activation(activation_string):
+    act = {
+        "gelu": tf.keras.activations.gelu,
+        "relu": tf.keras.activations.relu,
+        "swish": tf.keras.activations.swish,
+        "silu": tf.keras.activations.swish,
+        "tanh": tf.keras.activations.tanh,
+    }.get(activation_string, tf.keras.activations.gelu)
+    return act
 
 
 logger = logging.get_logger(__name__)

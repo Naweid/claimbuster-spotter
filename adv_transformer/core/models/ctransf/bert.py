@@ -56,6 +56,11 @@ try:
     )
 except ModuleNotFoundError:
     # Compatibility: modeling_tf_utils was removed in newer transformers
+    try:
+        from transformers.models.bert.modeling_tf_bert import TFBertPreTrainedModel as TFPreTrainedModel
+    except Exception:
+        TFPreTrainedModel = None
+
     def shape_list(x):
         static = x.shape.as_list()
         dynamic = tf.shape(x)
@@ -66,11 +71,6 @@ except ModuleNotFoundError:
 
     def keras_serializable(cls):
         return cls
-
-    class TFPreTrainedModel(tf.keras.Model):
-        def __init__(self, config, *inputs, **kwargs):
-            super().__init__(*inputs, **kwargs)
-            self.config = config
 
     def _compute_loss(labels, logits, from_logits=True):
         return tf.reduce_mean(
@@ -107,6 +107,30 @@ except ModuleNotFoundError:
                     labels["end_position"], logits[1]
                 )
             return _compute_loss(labels, logits)
+
+    if TFPreTrainedModel is None:
+        class TFPreTrainedModel(tf.keras.Model):
+            def __init__(self, config, *inputs, **kwargs):
+                super().__init__(*inputs, **kwargs)
+                self.config = config
+
+            @classmethod
+            def from_pretrained(cls, pretrained_model_name_or_path, *model_args, **kwargs):
+                from transformers import AutoConfig
+                config = kwargs.pop("config", None)
+                if config is None:
+                    config = AutoConfig.from_pretrained(pretrained_model_name_or_path)
+                model = cls(config, *model_args, **kwargs)
+                # Try to load TF weights if available
+                try:
+                    import os
+                    from huggingface_hub import hf_hub_download
+                    path = hf_hub_download(pretrained_model_name_or_path, "tf_model.h5")
+                    if path and os.path.exists(path):
+                        model.load_weights(path)
+                except Exception:
+                    pass
+                return model
 from transformers.tokenization_utils_base import BatchEncoding
 from transformers.utils import logging
 
